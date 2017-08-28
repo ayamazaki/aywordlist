@@ -1,0 +1,211 @@
+<p id="notice"><%= notice %></p>
+<head>
+  <style type="text/css">
+
+  body{
+    margin: 0;
+    background: #fff;
+    text-align: center;
+    font-family: Verdana, sans-serif;
+    color: #05aafa;
+  }
+  #card{
+    margin: 60px auto 20px;
+    width: 400px;
+    height: 100px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 100px;
+    box-shadow:  0 4px 0 #fff;
+  }
+  .cardbody {
+    padding-top: 20px;
+/*    background-color: #eee;*/
+    font-size: 30px;
+    text-align: center;
+    line-height: 250px;
+}
+
+#color{
+  color: #05aafa;
+}
+
+.wrapper {
+    width: 200px;
+    height: 150px;
+    margin: 0 auto;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+}
+.inner {
+    position: relative;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-transition: .6s;
+    transition: .6s;
+}
+
+.front,
+.back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 150px;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+.front {
+      background-color: #fff;
+    background-color: #146AFC;
+    
+}
+.back {
+  background-color: #e0e0e0;
+    background-color: #39FA29;
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+}
+.wrapper:hover .inner {
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+}
+</style>
+
+</head>
+<h1>Word list</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>問題</th>
+      <th>解答</th>
+      <th>解答</th>
+      <th>正解不正解</th>
+      <th>最終演習時刻</th>
+      <th>6</th>
+      <th>7</th>
+      <th colspan="4"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+  <script type="text/javascript">
+  $(function() {
+ 
+  //マウスを乗せたら発動
+  $('td').hover(function() {
+ 
+    //マウスを乗せたら色が変わる
+    $(this).css('background', '#c00');
+ 
+  //ここにはマウスを離したときの動作を記述
+  }, function() {
+ 
+    //色指定を空欄にすれば元の色に戻る
+    $(this).css('background', '');
+ 
+  });
+});
+
+
+</script>
+
+<div> 
+<%= form_tag(users_path, method: "get") do %>
+<%= label_tag :name, "問題文検索" %><%= text_field_tag :name, params[:name] %>
+<%= submit_tag "検索" %>
+<% end %>
+
+
+<%= form_tag(users_path, method: "get") do %>
+<%= label_tag :name, "正解不正解検索" %>
+<%= select_tag :value1, options_for_select({'◯'=>'◯','△'=>'△','x'=>'x','-'=>'-'}), include_blank: true %>
+<%= submit_tag "検索" %>
+<% end %>
+
+<%= form_tag(users_path, method: "get") do %>
+<div class="field">
+<%= label_tag :name, "最近やってないもの検索" %>
+<%= text_field_tag :value5 ,@time4 %>
+</div>
+<%= submit_tag "検索" %>
+<% end %>
+
+
+<%= form_tag(users_path, method: "get") do %>
+<div class="field">
+<%= label_tag :name, "2回連◯/△/xなやつ検索" %>
+<%= text_field_tag :value6 ,'x'  %>
+</div>
+<%= submit_tag "検索" %>
+<% end %>
+
+</div>
+
+
+    <% @users.each do |user| %>
+
+    <% value7= user.value3[-1] %>
+      <tr style="background-color: <%= cycle('#FFffFF','FFff99') %>">
+        <td><%= user.name %></td>
+
+        <td><td><div class="cardbody"><div  class="wrapper"><div class="inner"><div class="front"><textarea cols="10" rows="6" name="meaning"  style="font-size:20px;color:#fff;background-color:#05aafa;text-align:center;">answer</textarea></div><div class="back"><textarea cols="10" rows="6" name="meaning" id="meaning" style="font-size:20px;color:#fff;background-color:#05aafa;text-align:center;"><%= user.email %></textarea></div></div></div></div></td></td>
+        <td><%= user.value1 %></td>
+        <td><%= user.value2 %></td>
+        <td><div class="field" >
+           <%= user.value3+user.value1 %>
+           </div>
+        </td>
+        <td><%= Time.now.strftime('%m月%d日%H時%M分') %></td>
+        <td><%= ((Time.now - user.updated_at)/3600).round(1)  %></td>
+        <td><%= link_to 'Show', user %></td>
+        <td><%= link_to 'Edit', edit_user_path(user) %></td>
+        <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td>
+
+      <%= form_with(model: user) do |form| %>
+          <div class="field" >
+          <%= form.label :問題  %>
+          <%= form.text_field :name, id: :user_name %>
+
+          <%= form.label :解答 %>
+          <%= form.text_field :email, id: :user_email %>
+            <label><%= form.radio_button :value1 ,'◯', id: :user_value1 %>◯</label>
+            <label><%= form.radio_button :value1 ,'△', id: :user_value1 %>△</label>
+            <label><%= form.radio_button :value1 ,'x', id: :user_value1 %>x</label>
+            <label><%= form.radio_button :value1 ,'-', id: :user_value1,checked: "checked" %>-</label>
+            </div>
+
+
+            <div class="field" >
+            <label><%= form.radio_button :value2 ,@time, id: :user_value1, :checked => true %>@time</label>
+            <label><%= form.label :history %>
+            <%= form.text_field :value3, value:  user.value3 + user.value1 , id: :user_value3 %></label>
+            </div>
+
+    <div class="actions">
+      <%= form.submit %>
+
+    </div>
+    <% end %> 
+          
+          
+
+        </td>
+
+
+        <td>
+      
+        </td>
+
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New User', new_user_path %>
